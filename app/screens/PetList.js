@@ -11,16 +11,16 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPets } from "../redux/petSlice";
-import AppCard from "../reusables/AppCard";
 import AppSVG from "../reusables/AppSVG";
 import AppText from "../reusables/AppText";
 import Colors from "../utils/Colors";
 import HeartOutlined from "../../assets/icons/heart-outline.svg";
-import FastImage from "react-native-fast-image";
+import PetsItem from "../components/PetsItem";
+import { toggler } from "../helpers/toggler";
 
 // const _HEIGHT = Dimensions.get(window).height;
 
-const CatList = () => {
+const PetList = () => {
   const [refreshing, setRefreshing] = useState(false);
   const petReducer = useSelector((state) => state.petSlice);
   const dispatch = useDispatch();
@@ -37,41 +37,68 @@ const CatList = () => {
     dispatch(fetchPets());
   }, []);
 
-  useEffect(() => {
-    if (petReducer.status == "idle") {
-      dispatch(fetchPets());
+  const allPets = () => {
+    let pets = [];
+    if (petReducer.pets.length !== 0) {
+      petReducer.pets.map((pet) => {
+        pets.push({
+          id: pet.id,
+          name: pet.name,
+          url: pet.image.url,
+          toggled: false,
+        });
+      });
     }
-  }, []);
+    return pets;
+  };
 
-  if (petReducer && petReducer.pets.length == 0) {
+  let petsToRender = allPets();
+  const [lists, setList] = useState(petsToRender);
+
+  // This is to make sure the list is always sorted
+  const sortedlist = lists.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+  useEffect(() => {
+    dispatch(fetchPets());
+    if (petsToRender.length != 0) setList(petsToRender);
+  }, [petsToRender.length, petReducer.status === "idle"]);
+
+  if (petReducer.status == "loading") {
     return (
       <View style={styles.indicator}>
-        <AppText title={"No Items found"} />
-        <TouchableOpacity onPress={handleReload}>
-          <AppText title={"Reload"} fontSize={18} />
-        </TouchableOpacity>
+        <ActivityIndicator color={Colors.danger} size={"large"} />
       </View>
     );
   }
 
+  // console.log(petReducer.status);
+  // console.log(444444444444, sortedlist);
+
   return (
     <View>
-      {petReducer.status === "loading" ? (
-        <View style={styles.indicator}>
-          <ActivityIndicator color={Colors.danger} size={"large"} />
+      {sortedlist.length === 0 ? (
+        <View style={styles.noItem}>
+          <AppText title={"No Items found"} />
+          <TouchableOpacity onPress={handleReload}>
+            <AppText title={"Reload"} fontSize={18} />
+          </TouchableOpacity>
         </View>
       ) : (
         <View style={{ margin: "3%" }}>
           <AppText
-            title={"All Cats"}
+            title={"All Dogs"}
             margin="3%"
             marginTop="10%"
             fontSize={16}
             fontFamily="SFSB"
           />
           <FlatList
-            data={petReducer.pets}
+            data={sortedlist}
             showsVerticalScrollIndicator={false}
+            onEndReached={() => {}}
+            onEndReachedThreshold={0.7}
+            initialNumToRender={9}
+            removeClippedSubviews={true}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -79,33 +106,10 @@ const CatList = () => {
                 colors={[Colors.danger]}
               />
             }
+            keyExtractor={(item, index) => index}
             renderItem={({ item }) => {
               return (
-                <View
-                  key={item.id}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginVertical: "3%",
-                    marginHorizontal: "3%",
-                  }}
-                >
-                  <View style={{ alignItems: "center", flexDirection: "row" }}>
-                    <FastImage
-                      source={{
-                        uri: item.image.url,
-                        priority: "high",
-                      }}
-                      style={{ width: 45, height: 45, borderRadius: 10 }}
-                    />
-
-                    <AppText title={item.name} fontSize={16} marginLeft="10%" />
-                  </View>
-                  <TouchableOpacity>
-                    <AppSVG svgName={HeartOutlined} width={22} height={22} />
-                  </TouchableOpacity>
-                </View>
+                <PetsItem onToggle={() => toggler(setList, item)} item={item} />
               );
             }}
           />
@@ -124,13 +128,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: "100%",
   },
   noItem: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: "70%",
   },
 });
 
-export default CatList;
+export default PetList;

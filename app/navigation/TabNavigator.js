@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Colors from "../utils/Colors";
 import AppSVG from "../reusables/AppSVG";
-import CatList from "../screens/CatList";
-import FavoriteCats from "../screens/FavoriteCats";
+import PetList from "../screens/PetList";
+import FavoritePets from "../screens/FavoritePets";
 import HeartIcon from "../../assets/icons/heart.svg";
 import CatIcon from "../../assets/icons/cat-dark.svg";
 
@@ -21,7 +21,7 @@ const TabNavigator = (props) => {
         tabBarInactiveBackgroundColor: "#FFFFFF",
         tabBarItemStyle: { backgroundColor: Colors.default },
         tabBarLabelStyle: {
-          fontFamily: "SFR",
+          fontFamily: "SFB",
           fontSize: 13,
           marginBottom: "10%",
         },
@@ -35,9 +35,9 @@ const TabNavigator = (props) => {
         tabBarIcon: ({ focused, color, size }) => {
           let IconComponent;
 
-          if (route.name === "All Cats") {
+          if (route.name === "All Dogs") {
             IconComponent = CatIcon;
-          } else if (route.name === "Cats I like") {
+          } else if (route.name === "Dogs I like") {
             IconComponent = HeartIcon;
           }
 
@@ -53,10 +53,10 @@ const TabNavigator = (props) => {
           );
         },
       })}
-      initialRouteName="All Cats"
+      initialRouteName="All Dogs"
     >
-      <Tab.Screen name="All Cats" component={CatList} />
-      <Tab.Screen name="Cats I like" component={FavoriteCats} />
+      <Tab.Screen name="All Dogs" component={PetList} />
+      <Tab.Screen name="Dogs I like" component={FavoritePets} />
     </Tab.Navigator>
   );
 };
