@@ -4,9 +4,9 @@
     "slug": "cutiePet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/pet-care.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/pet-care.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
