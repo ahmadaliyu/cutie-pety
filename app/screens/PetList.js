@@ -34,22 +34,19 @@ const PetList = () => {
     dispatch(fetchPets());
   }, []);
 
-  const petsToRender = () => {
-    let pets = [];
-    if (petReducer.pets.length != 0) {
-      petReducer.pets.map((pet) => {
-        pets.push({
-          id: pet.id,
-          name: pet.name,
-          url: pet.image.url,
-          toggled: false,
-        });
+  let petsToRender = [];
+  if (petReducer.pets.length != 0) {
+    petReducer.pets.map((pet) => {
+      petsToRender.push({
+        id: pet.id,
+        name: pet.name,
+        url: pet.image.url,
+        toggled: false,
       });
-    }
-    return pets;
-  };
+    });
+  }
 
-  const [lists, setList] = useState(petsToRender());
+  const [lists, setList] = useState(petsToRender);
 
   // This is to make sure the list is always sorted
   const sortedlist = lists.sort((a, b) => (a.id > b.id ? 1 : -1));
