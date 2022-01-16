@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { favorites, fetchPets } from "./petSlice";
+import { fetchPets } from "./petSlice";
 
 const initialState = {
   pets: [],
@@ -11,7 +11,11 @@ const initialState = {
 const petSlice = createSlice({
   name: "fetch-pets",
   initialState,
-  reducers: {},
+  reducers: {
+    pushToFavorites: (state, action) => {
+      state.favoritePets = action.payload;
+    },
+  },
   extraReducers: {
     [fetchPets.pending]: (state, action) => {
       state.status = "loading";
@@ -25,21 +29,13 @@ const petSlice = createSlice({
       state.status = "error";
       state.error = action.error.message;
     },
-    [favorites.pending]: (state, action) => {
-      state.status = "loading";
-    },
-    [fetchPets.fulfilled]: (state, action) => {
-      state.status = "succeeded";
-      state.error = null;
-      state.favorites = action.payload;
-    },
-    [fetchPets.rejected]: (state, action) => {
-      state.status = "error";
-      state.error = action.error.message;
-    },
   },
 });
 
 export default petSlice.reducer;
 
 export const PetReducer = (state) => state.petSlice;
+
+//action creators
+export const pushAsFavorite = (state) =>
+  petSlice.actions.pushToFavorites(state);

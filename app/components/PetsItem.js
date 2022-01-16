@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { Image, View, TouchableOpacity } from "react-native";
 import AppSVG from "../reusables/AppSVG";
 import AppText from "../reusables/AppText";
@@ -28,7 +28,6 @@ const PetsItem = ({ item, onToggle }) => {
             item.url
               ? {
                   uri: item.url,
-
                   cache: "only-if-cached",
                 }
               : require("../../assets/icons/placeholder.png")
@@ -40,9 +39,9 @@ const PetsItem = ({ item, onToggle }) => {
       </View>
       <TouchableOpacity activeOpacity={0.7} onPress={onToggle}>
         {item.toggled ? (
-          <AppSVG svgName={HeartRed} width={22} height={22} />
+          <AppSVG svgName={HeartRed} width={27} height={27} />
         ) : (
-          <AppSVG svgName={HeartOutlined} width={22} height={22} />
+          <AppSVG svgName={HeartOutlined} width={27} height={27} />
         )}
       </TouchableOpacity>
     </View>

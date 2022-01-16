@@ -1,34 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, Image, View, TouchableOpacity } from "react-native";
 import AppSVG from "../reusables/AppSVG";
 import AppText from "../reusables/AppText";
 import Icon from "../../assets/icons/heart-fill.svg";
-
-const dogs = [
-  {
-    id: 1,
-    name: "blabla",
-    image: require("../../assets/images/test.png"),
-    icon: Icon,
-  },
-  {
-    id: 2,
-    name: "blabla",
-    image: require("../../assets/images/test.png"),
-    icon: Icon,
-  },
-  {
-    id: 3,
-    name: "blabla",
-    image: require("../../assets/images/test.png"),
-    icon: Icon,
-  },
-];
+import { useSelector } from "react-redux";
 
 const FavoritePets = () => {
+  const favorites = useSelector((state) => state.petSlice.favoritePets);
+
+  // console.log(favorites);
+
+  useEffect(() => {});
   return (
     <View style={styles.container}>
-      {dogs.length == 0 ? (
+      {favorites.length == 0 ? (
         <View style={styles.noItem}>
           <AppText title={"You don't have any favorites yet"} />
           <TouchableOpacity></TouchableOpacity>
@@ -45,7 +30,7 @@ const FavoritePets = () => {
             />
           </View>
           <FlatList
-            data={dogs}
+            data={favorites}
             showsVerticalScrollIndicator={false}
             onEndReached={() => {}}
             onEndReachedThreshold={0.7}
@@ -57,7 +42,7 @@ const FavoritePets = () => {
               return (
                 <View style={styles.content}>
                   <Image
-                    source={item.image}
+                    source={{ uri: item.url }}
                     style={{
                       width: "100%",
                       height: 130,
@@ -77,11 +62,11 @@ const FavoritePets = () => {
                     }}
                   >
                     <AppText
-                      width={"60%"}
-                      fontSize={16}
+                      width={"85%"}
+                      fontSize={14}
                       title={`${item.name}`}
                     />
-                    <AppSVG svgName={item.icon} />
+                    <AppSVG svgName={Icon} />
                   </View>
                 </View>
               );

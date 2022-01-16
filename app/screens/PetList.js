@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
-  Image,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -11,12 +9,11 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPets } from "../redux/petSlice";
-import AppSVG from "../reusables/AppSVG";
 import AppText from "../reusables/AppText";
 import Colors from "../utils/Colors";
-import HeartOutlined from "../../assets/icons/heart-outline.svg";
 import PetsItem from "../components/PetsItem";
 import { toggler } from "../helpers/toggler";
+import { pushAsFavorite } from "../redux/petReducer";
 
 // const _HEIGHT = Dimensions.get(window).height;
 
@@ -37,9 +34,9 @@ const PetList = () => {
     dispatch(fetchPets());
   }, []);
 
-  const allPets = () => {
+  const petsToRender = () => {
     let pets = [];
-    if (petReducer.pets.length !== 0) {
+    if (petReducer.pets.length != 0) {
       petReducer.pets.map((pet) => {
         pets.push({
           id: pet.id,
@@ -52,16 +49,36 @@ const PetList = () => {
     return pets;
   };
 
-  let petsToRender = allPets();
-  const [lists, setList] = useState(petsToRender);
+  const [lists, setList] = useState(petsToRender());
 
   // This is to make sure the list is always sorted
   const sortedlist = lists.sort((a, b) => (a.id > b.id ? 1 : -1));
 
+  const favoritePets = () => {
+    let fav = [];
+    sortedlist.forEach((elm) => {
+      if (elm.toggled) {
+        fav.push({
+          id: elm.id,
+          name: elm.name,
+          url: elm.url,
+        });
+      }
+    });
+    return fav;
+  };
+
   useEffect(() => {
-    dispatch(fetchPets());
+    dispatch(pushAsFavorite(favoritePets()));
+  }, [favoritePets().length]);
+
+  useEffect(() => {
     if (petsToRender.length != 0) setList(petsToRender);
-  }, [petsToRender.length, petReducer.status === "idle"]);
+  }, [petsToRender.length]);
+
+  useEffect(() => {
+    if (petReducer.status === "idle") dispatch(fetchPets());
+  }, [petReducer.status]);
 
   if (petReducer.status == "loading") {
     return (
@@ -71,12 +88,9 @@ const PetList = () => {
     );
   }
 
-  // console.log(petReducer.status);
-  // console.log(444444444444, sortedlist);
-
   return (
     <View>
-      {sortedlist.length === 0 ? (
+      {petReducer.pets.length === 0 ? (
         <View style={styles.noItem}>
           <AppText title={"No Items found"} />
           <TouchableOpacity onPress={handleReload}>
@@ -109,7 +123,12 @@ const PetList = () => {
             keyExtractor={(item, index) => index}
             renderItem={({ item }) => {
               return (
-                <PetsItem onToggle={() => toggler(setList, item)} item={item} />
+                <PetsItem
+                  onToggle={() => {
+                    toggler(setList, item);
+                  }}
+                  item={item}
+                />
               );
             }}
           />
