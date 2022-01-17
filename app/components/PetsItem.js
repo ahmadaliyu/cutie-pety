@@ -4,6 +4,7 @@ import AppSVG from "../reusables/AppSVG";
 import AppText from "../reusables/AppText";
 import HeartOutlined from "../../assets/icons/heart-outline.svg";
 import HeartRed from "../../assets/icons/heart-fill.svg";
+import FastImage from "react-native-fast-image";
 
 const PetsItem = ({ item, onToggle }) => {
   return (
@@ -23,12 +24,12 @@ const PetsItem = ({ item, onToggle }) => {
           justifyContent: "space-between",
         }}
       >
-        <Image
+        <FastImage
           source={
             item.url
               ? {
                   uri: item.url,
-                  cache: "only-if-cached",
+                  priority: FastImage.priority.high,
                 }
               : require("../../assets/icons/placeholder.png")
           }

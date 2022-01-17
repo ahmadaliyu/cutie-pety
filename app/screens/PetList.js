@@ -14,6 +14,7 @@ import Colors from "../utils/Colors";
 import PetsItem from "../components/PetsItem";
 import { toggler } from "../helpers/toggler";
 import { pushAsFavorite } from "../redux/petReducer";
+import { NoDataItem, TextItem } from "../components/FlatListComponent";
 
 // const _HEIGHT = Dimensions.get(window).height;
 
@@ -86,51 +87,45 @@ const PetList = () => {
   }
 
   return (
-    <View>
-      {petReducer.pets.length === 0 ? (
-        <View style={styles.noItem}>
-          <AppText title={"No Items found"} />
-          <TouchableOpacity onPress={handleReload}>
-            <AppText title={"Reload"} fontSize={18} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={{ margin: "3%" }}>
-          <AppText
-            title={"All Dogs"}
-            margin="3%"
-            marginTop="10%"
-            fontSize={16}
-            fontFamily="SFSB"
+    <View style={styles.container}>
+      <FlatList
+        data={sortedlist}
+        showsVerticalScrollIndicator={false}
+        onEndReached={() => {}}
+        onEndReachedThreshold={0.7}
+        initialNumToRender={9}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={100}
+        getItemLayout={(data, index) => ({
+          length: 100,
+          offset: 100 * 0.7,
+          index,
+        })}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[Colors.danger]}
           />
-          <FlatList
-            data={sortedlist}
-            showsVerticalScrollIndicator={false}
-            onEndReached={() => {}}
-            onEndReachedThreshold={0.7}
-            initialNumToRender={9}
-            removeClippedSubviews={true}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[Colors.danger]}
-              />
-            }
-            keyExtractor={(item, index) => index}
-            renderItem={({ item }) => {
-              return (
-                <PetsItem
-                  onToggle={() => {
-                    toggler(setList, item);
-                  }}
-                  item={item}
-                />
-              );
-            }}
-          />
-        </View>
-      )}
+        }
+        keyExtractor={(item, index) => index}
+        renderItem={({ item }) => {
+          return (
+            <PetsItem
+              onToggle={() => {
+                toggler(setList, item);
+              }}
+              item={item}
+            />
+          );
+        }}
+        ListHeaderComponent={() => {
+          return <TextItem title={"All Dogs"} />;
+        }}
+        ListEmptyComponent={() => {
+          return <NoDataItem onReload={handleReload} />;
+        }}
+      />
     </View>
   );
 };
@@ -144,11 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  noItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "70%",
+    backgroundColor: Colors.default,
   },
 });
 
