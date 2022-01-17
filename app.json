@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/pet-care.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.ahmadev.cutiepety"
